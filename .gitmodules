@@ -7,3 +7,12 @@
 [submodule "modules/mesos"]
 	path = modules/mesos
 	url = https://github.com/deric/puppet-mesos
+[submodule "modules/apt"]
+	path = modules/apt
+	url = https://github.com/puppetlabs/puppetlabs-apt.git
+[submodule "modules/camptocamp-archive"]
+	path = modules/camptocamp-archive
+	url = https://github.com/camptocamp/puppet-archive.git
+[submodule "modules/stdlib"]
+	path = modules/stdlib
+	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
