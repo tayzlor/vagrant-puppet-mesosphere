@@ -13,14 +13,14 @@ ninfos = gen_node_infos(conf)
 Vagrant.configure("2") do |config|
 
   # https://vagrantcloud.com/chef/boxes/centos-6.5
-  #config.vm.box = "chef/centos-6.5"
-  config.vm.box_url = "https://vagrantcloud.com/chef/boxes/centos-6.5/versions/1.0.0/providers/virtualbox.box"
+  config.vm.box = "chef/centos-6.5"
 
 
   # if you want to use vagrant-cachier,
   # please install vagrant-cachier plugin.
   if Vagrant.has_plugin?("vagrant-cachier")
-
+    config.cache.enable :apt
+    config.cache.enable :chef
   end
 
   # define VMs. all VMs has identical configuration.
