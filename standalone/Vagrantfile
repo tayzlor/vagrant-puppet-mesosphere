@@ -1,86 +1,89 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 require 'yaml'
-require './lib/gen_node_infos'
-require './lib/predicates'
-
-base_dir = File.expand_path(File.dirname(__FILE__))
-conf = YAML.load_file(File.join(base_dir, "cluster.yml"))
-ninfos = gen_node_infos(conf)
+mesos_version = "0.20.1"
 
 ## vagrant plugins required:
-# vagrant-digitalocean, vagrant, vagrant, vagrant-hosts, vagrant-cachier
+# vagrant-digitalocean, vagrant, vagrant-hosts, vagrant-cachier
 Vagrant.configure("2") do |config|
 
-  # https://vagrantcloud.com/chef/boxes/centos-6.5
-  config.vm.box = "chef/centos-6.5"
+  # https://vagrantcloud.com/puppetlabs/boxes/centos-6.5-64-puppet
+  config.vm.box = "puppetlabs/centos-6.5-64-puppet"
 
-
-  # if you want to use vagrant-cachier,
+  # If you want to use vagrant-cachier,
   # please install vagrant-cachier plugin.
   if Vagrant.has_plugin?("vagrant-cachier")
     config.cache.enable :apt
-    config.cache.enable :chef
   end
 
-  # define VMs. all VMs has identical configuration.
-  [ninfos[:zk], ninfos[:master], ninfos[:slave]].flatten.each_with_index do |ninfo, i|
-    config.vm.define ninfo[:hostname] do |cfg|
+  config.vm.provider :virtualbox do |vb, override|
+    # Use VBoxManage to customize the VM. For example to change memory:
+    vb.customize ["modifyvm", :id, "--memory", "#{1024*2}"]
+    vb.customize ["modifyvm", :id,  "--cpus",  "2"]
 
-      cfg.vm.provider :virtualbox do |vb, override|
-        override.vm.hostname = ninfo[:hostname]
-        override.vm.network :private_network, :ip => ninfo[:ip]
-        override.vm.provision :hosts
+    # Please customize hostname and private ip configuration if you needed.
+    override.vm.hostname = "mesos"
+    private_ip = "192.168.33.10"
+    override.vm.network :private_network, ip: private_ip
+    override.vm.provision :hosts do |provisioner|
+      provisioner.add_host private_ip , [ config.vm.hostname ]
+    end
 
-        vb.name = 'vagrant-mesos-' + ninfo[:hostname]
-        vb.customize ["modifyvm", :id, "--memory", ninfo[:mem], "--cpus", ninfo[:cpus] ]
+    # for mesos web UI.
+    override.vm.network :forwarded_port, guest: 5050, host: 5050
+    # for Marathon web UI
+    override.vm.network :forwarded_port, guest: 8080, host: 8080
+    # for Chronos web UI
+    override.vm.network :forwarded_port, guest: 8081, host: 8081
 
-        override.vm.provision :shell do |s|
-          s.path = "scripts/populate_sshkey.sh"
-          s.args = "/root root"
-        end
+    override.vm.provision :shell do |s|
+      s.path = "scripts/populate_sshkey.sh"
+      s.args = "/home/vagrant vagrant"
+    end
+  end
 
-        override.vm.provision :shell do |s|
-          s.path = "scripts/populate_sshkey.sh"
-          s.args = "/home/vagrant vagrant"
-        end
-      end
+  cfg.vm.provider :digitalocean do |digitalocean, override|
+  end
 
-      cfg.vm.provider :digitalocean do |digitalocean, override|
+  config.vm.provision "puppet" do |puppet|
+    puppet.manifests_path    = "../manifests"
+    puppet.module_path       = "../modules"
+    puppet.manifest_file     = "site.pp"
+    puppet.hiera_config_path = "../hiera.yaml"
+    puppet.options           = "--verbose --debug"
+  end
 
-      end
+  #if zk?(ninfo[:hostname]) then
+  #  myid = (/zk([0-9]+)/.match ninfo[:hostname])[1]
+  #  cfg.vm.provision :shell, :inline => <<-SCRIPT
+  #    sudo mkdir -p /tmp/zookeeper
+  #    sudo chmod 755 /tmp/zookeeper
+  #    sudo chown zookeeper /tmp/zookeeper
+  #    sudo -u zookeeper echo #{myid} > /tmp/zookeeper/myid
+  #    sudo -u zookeeper /opt/chef/embedded/bin/ruby /vagrant/scripts/gen_zoo_conf.rb > /etc/zookeeper/conf/zoo.cfg
+  #    sudo restart zookeeper
+  #  SCRIPT
+  #end
 
-      # mesos-master doesn't create its work_dir.
-      master_work_dir = "/var/run/mesos"
-      if master?(ninfo[:hostname]) then
-        cfg.vm.provision :shell, :inline => "mkdir -p #{master_work_dir}"
-      end
+  config.vm.provision :shell, :privileged => true, :inline => <<-SCRIPT
+    #mkdir -p /var/log/marathon
+    #kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
+    #nohup /opt/marathon/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
 
-      config.vm.provision "puppet" do |puppet|
-        puppet.options = "--verbose --debug"
-      end
+    # Install and run Chronos based on:
+    # https://mesosphere.io/learn/run-chronos-on-mesos/
+    #mkdir -p /var/log/chronos
+    #nohup /opt/chronos/bin/start-chronos.bash --master zk://localhost:2181/mesos --zk_hosts zk://localhost:2181/mesos --http_port 8081 > /var/log/chronos/nohup.log 2> /var/log/chronos/nohup.log < /dev/null &
+    #SCRIPT
 
-      if zk?(ninfo[:hostname]) then
-        myid = (/zk([0-9]+)/.match ninfo[:hostname])[1]
-        cfg.vm.provision :shell, :inline => <<-SCRIPT
-          sudo mkdir -p /tmp/zookeeper
-          sudo chmod 755 /tmp/zookeeper
-          sudo chown zookeeper /tmp/zookeeper
-          sudo -u zookeeper echo #{myid} > /tmp/zookeeper/myid
-          sudo -u zookeeper /opt/chef/embedded/bin/ruby /vagrant/scripts/gen_zoo_conf.rb > /etc/zookeeper/conf/zoo.cfg
-          sudo restart zookeeper
+    # If you wanted use `.dockercfg` file
+    # Please place the file simply on this directory
+    if File.exist?(".dockercfg")
+      config.vm.provision :shell, :priviledged => true, :inline => <<-SCRIPT
+        cp /vagrant/.dockercfg /root/.dockercfg
+        chmod 600 /root/.dockercfg
+        chown root /root/.dockercfg
         SCRIPT
-      end
-
-      # If you wanted use `.dockercfg` file
-      # Please place the file simply on this directory
-      if File.exist?(".dockercfg")
-        config.vm.provision :shell, :priviledged => true, :inline => <<-SCRIPT
-          cp /vagrant/.dockercfg /root/.dockercfg
-          chmod 600 /root/.dockercfg
-          chown root /root/.dockercfg
-        SCRIPT
-      end
     end
   end
 end
