@@ -10,12 +10,18 @@
 [submodule "modules/apt"]
 	path = modules/apt
 	url = https://github.com/puppetlabs/puppetlabs-apt.git
-[submodule "modules/camptocamp-archive"]
-	path = modules/camptocamp-archive
-	url = https://github.com/camptocamp/puppet-archive.git
 [submodule "modules/stdlib"]
 	path = modules/stdlib
 	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
 [submodule "modules/zookeeper"]
 	path = modules/zookeeper
 	url = https://github.com/deric/puppet-zookeeper
+[submodule "modules/epel"]
+	path = modules/epel
+	url = https://github.com/stahnma/puppet-module-epel.git
+[submodule "modules/archive"]
+	path = modules/archive
+	url = https://github.com/camptocamp/puppet-archive
+[submodule "modules/datacat"]
+	path = modules/datacat
+	url = https://github.com/richardc/puppet-datacat.git

@@ -37,12 +37,12 @@ Vagrant.configure("2") do |config|
     override.vm.network :forwarded_port, guest: 8081, host: 8081
 
     override.vm.provision :shell do |s|
-      s.path = "scripts/populate_sshkey.sh"
+      s.path = "scripts/populate_ssh_key.sh"
       s.args = "/home/vagrant vagrant"
     end
   end
 
-  cfg.vm.provider :digitalocean do |digitalocean, override|
+  config.vm.provider :digitalocean do |digitalocean, override|
   end
 
   config.vm.provision "puppet" do |puppet|
@@ -65,7 +65,7 @@ Vagrant.configure("2") do |config|
   #  SCRIPT
   #end
 
-  config.vm.provision :shell, :privileged => true, :inline => <<-SCRIPT
+  #config.vm.provision :shell, :privileged => true, :inline => <<-SCRIPT
     #mkdir -p /var/log/marathon
     #kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
     #nohup /opt/marathon/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
@@ -85,5 +85,5 @@ Vagrant.configure("2") do |config|
         chown root /root/.dockercfg
         SCRIPT
     end
-  end
+  #end
 end
