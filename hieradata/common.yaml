@@ -1,1 +1,4 @@
 marathon::version: '0.7.5'
+marathon::source_install: false
+mesos::repo: 'mesosphere'
+docker::version: '1.0.1'

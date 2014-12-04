@@ -25,3 +25,6 @@
 [submodule "modules/datacat"]
 	path = modules/datacat
 	url = https://github.com/richardc/puppet-datacat.git
+[submodule "modules/java"]
+	path = modules/java
+	url = https://github.com/puppetlabs/puppetlabs-java

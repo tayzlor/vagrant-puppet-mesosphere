@@ -1,14 +1,11 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-require 'yaml'
-mesos_version = "0.20.1"
-
 ## vagrant plugins required:
 # vagrant-digitalocean, vagrant, vagrant-hosts, vagrant-cachier
 Vagrant.configure("2") do |config|
 
-  # https://vagrantcloud.com/puppetlabs/boxes/centos-6.5-64-puppet
-  config.vm.box = "puppetlabs/centos-6.5-64-puppet"
+  # https://vagrantcloud.com/ubuntu/boxes/trusty64
+  config.vm.box = "puppetlabs/ubuntu-14.04-64-puppet"
 
   # If you want to use vagrant-cachier,
   # please install vagrant-cachier plugin.
