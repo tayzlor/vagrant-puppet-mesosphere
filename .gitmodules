@@ -1,0 +1,9 @@
+[submodule "modules/docker"]
+	path = modules/docker
+	url = https://github.com/garethr/garethr-docker.git
+[submodule "modules/marathon"]
+	path = modules/marathon
+	url = https://github.com/meltwater/puppet-marathon
+[submodule "modules/mesos"]
+	path = modules/mesos
+	url = https://github.com/deric/puppet-mesos
