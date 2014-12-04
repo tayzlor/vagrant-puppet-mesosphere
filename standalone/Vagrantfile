@@ -30,8 +30,6 @@ Vagrant.configure("2") do |config|
     override.vm.network :forwarded_port, guest: 5050, host: 5050
     # for Marathon web UI
     override.vm.network :forwarded_port, guest: 8080, host: 8080
-    # for Chronos web UI
-    override.vm.network :forwarded_port, guest: 8081, host: 8081
 
     override.vm.provision :shell do |s|
       s.path = "scripts/populate_ssh_key.sh"
