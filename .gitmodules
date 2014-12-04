@@ -13,3 +13,6 @@
 [submodule "modules/camptocamp-archive"]
 	path = modules/camptocamp-archive
 	url = https://github.com/camptocamp/puppet-archive.git
+[submodule "modules/stdlib"]
+	path = modules/stdlib
+	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
