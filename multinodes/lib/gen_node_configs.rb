@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-def gen_node_infos(cluster_yml)
+def gen_node_configs(cluster_yml)
   master_n = cluster_yml['master_n']
   master_mem = cluster_yml['master_mem']
   master_cpus = cluster_yml['master_cpus']

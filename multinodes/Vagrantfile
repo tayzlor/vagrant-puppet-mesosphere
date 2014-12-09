@@ -1,39 +1,37 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 require 'yaml'
-require './lib/gen_node_infos'
+require './lib/gen_node_configs'
 require './lib/predicates'
 
 base_dir = File.expand_path(File.dirname(__FILE__))
 conf = YAML.load_file(File.join(base_dir, "cluster.yml"))
-ninfos = gen_node_infos(conf)
+node_configs = gen_node_configs(conf)
 
 ## vagrant plugins required:
-# vagrant-digitalocean, vagrant, vagrant, vagrant-hosts, vagrant-cachier
+# vagrant, vagrant-hosts, vagrant-cachier
 Vagrant.configure("2") do |config|
 
-  # https://vagrantcloud.com/chef/boxes/centos-6.5
-  config.vm.box = "chef/centos-6.5"
-
+  # https://vagrantcloud.com/puppetlabs/boxes/ubuntu-14.04-64-puppet
+  config.vm.box = "puppetlabs/ubuntu-14.04-64-puppet"
 
   # if you want to use vagrant-cachier,
   # please install vagrant-cachier plugin.
   if Vagrant.has_plugin?("vagrant-cachier")
     config.cache.enable :apt
-    config.cache.enable :chef
   end
 
   # define VMs. all VMs has identical configuration.
-  [ninfos[:zk], ninfos[:master], ninfos[:slave]].flatten.each_with_index do |ninfo, i|
-    config.vm.define ninfo[:hostname] do |cfg|
+  [node_configs[:zk], node_configs[:master], node_configs[:slave]].flatten.each_with_index do |node, i|
+    config.vm.define node[:hostname] do |cfg|
 
       cfg.vm.provider :virtualbox do |vb, override|
-        override.vm.hostname = ninfo[:hostname]
-        override.vm.network :private_network, :ip => ninfo[:ip]
+        override.vm.hostname = node[:hostname]
+        override.vm.network :private_network, :ip => node[:ip]
         override.vm.provision :hosts
 
-        vb.name = 'vagrant-mesos-' + ninfo[:hostname]
-        vb.customize ["modifyvm", :id, "--memory", ninfo[:mem], "--cpus", ninfo[:cpus] ]
+        vb.name = 'vagrant-mesos-' + node[:hostname]
+        vb.customize ["modifyvm", :id, "--memory", node[:mem], "--cpus", node[:cpus] ]
 
         override.vm.provision :shell do |s|
           s.path = "scripts/populate_sshkey.sh"
@@ -46,30 +44,30 @@ Vagrant.configure("2") do |config|
         end
       end
 
-      cfg.vm.provider :digitalocean do |digitalocean, override|
-
-      end
-
-      # mesos-master doesn't create its work_dir.
-      master_work_dir = "/var/run/mesos"
-      if master?(ninfo[:hostname]) then
-        cfg.vm.provision :shell, :inline => "mkdir -p #{master_work_dir}"
-      end
-
       config.vm.provision "puppet" do |puppet|
-        puppet.options = "--verbose --debug"
-      end
+        puppet.manifests_path    = "manifests"
+        puppet.module_path       = "../modules"
+        puppet.hiera_config_path = "../hiera.yaml"
+        puppet.options           = "--verbose --debug"
 
-      if zk?(ninfo[:hostname]) then
-        myid = (/zk([0-9]+)/.match ninfo[:hostname])[1]
-        cfg.vm.provision :shell, :inline => <<-SCRIPT
-          sudo mkdir -p /tmp/zookeeper
-          sudo chmod 755 /tmp/zookeeper
-          sudo chown zookeeper /tmp/zookeeper
-          sudo -u zookeeper echo #{myid} > /tmp/zookeeper/myid
-          sudo -u zookeeper /opt/chef/embedded/bin/ruby /vagrant/scripts/gen_zoo_conf.rb > /etc/zookeeper/conf/zoo.cfg
-          sudo restart zookeeper
-        SCRIPT
+        if master?(node[:hostname]) then
+          puppet.manifest_file = "mesos-master.pp"
+          puppet.facter = {
+            "quorum"    => "#{(node_configs[:master].length.to_f/2).ceil}",
+            "zookeeper" => "zk://"+node_configs[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos",
+          }
+        elsif slave?(node[:hostname]) then
+          puppet.manifest_file = "mesos-slave.pp"
+          puppet.facter = {
+            "zookeeper" => "zk://"+node_configs[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos",
+          }
+        elsif zk?(node[:hostname]) then
+          puppet.manifest_file = "zookeeper.pp"
+          puppet.facter = {
+            "id"      => (/zk([0-9]+)/.match node[:hostname])[1],
+            "servers" => node_configs[:zk].map{|zk| zk[:ip]+":2888:3888"}.join(","),
+          }
+        end
       end
 
       # If you wanted use `.dockercfg` file
