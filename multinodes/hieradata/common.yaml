@@ -12,5 +12,6 @@ mesos::slave::options:
   containerizers: 'docker,mesos'
   executor_registration_timeout: '5mins'
   hostname: "%{::ipaddress}"
+  log_dir: "/var/log/mesos"
 
 zookeeper::client_port: 2181

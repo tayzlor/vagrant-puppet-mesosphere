@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
   end
 
   # define VMs. all VMs has identical configuration.
-  [node_configs[:zk], node_configs[:master], node_configs[:slave]].flatten.each_with_index do |node, i|
+  [node_configs[:master], node_configs[:slave]].flatten.each_with_index do |node, i|
     config.vm.define node[:hostname] do |cfg|
 
       cfg.vm.provider :virtualbox do |vb, override|
@@ -53,19 +53,16 @@ Vagrant.configure("2") do |config|
         if master?(node[:hostname]) then
           puppet.manifest_file = "mesos-master.pp"
           puppet.facter = {
-            "quorum"    => "#{(node_configs[:master].length.to_f/2).ceil}",
-            "zookeeper" => "zk://"+node_configs[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos",
+            "quorum"            => "#{(node_configs[:master].length.to_f/2).ceil}",
+            "zookeeper"         => "zk://"+node_configs[:master].map{|master| master[:ip]+":2181"}.join(",")+"/mesos",
+            "zookeeper_id"       => (/master([0-9]+)/.match node[:hostname])[1],
+            "zookeeper_servers" => node_configs[:master].map{|master| master[:ip]+":2888:3888"}.join(","),
+            "marathon_zk"       => "zk://"+node_configs[:master].map{|master| master[:ip]+":2181"}.join(",")+"/marathon",
           }
         elsif slave?(node[:hostname]) then
           puppet.manifest_file = "mesos-slave.pp"
           puppet.facter = {
-            "zookeeper" => "zk://"+node_configs[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos",
-          }
-        elsif zk?(node[:hostname]) then
-          puppet.manifest_file = "zookeeper.pp"
-          puppet.facter = {
-            "id"      => (/zk([0-9]+)/.match node[:hostname])[1],
-            "servers" => node_configs[:zk].map{|zk| zk[:ip]+":2888:3888"}.join(","),
+            "zookeeper" => "zk://"+node_configs[:master].map{|master| master[:ip]+":2181"}.join(",")+"/mesos",
           }
         end
       end

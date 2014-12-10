@@ -8,7 +8,3 @@ end
 def slave?(name)
     return /^slave/ =~ name
 end
-
-def zk?(name)
-    return /^zk/ =~ name
-end

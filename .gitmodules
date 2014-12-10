@@ -3,7 +3,7 @@
 	url = https://github.com/garethr/garethr-docker.git
 [submodule "modules/marathon"]
 	path = modules/marathon
-	url = https://github.com/tayzlor/puppet-marathon.git
+	url = https://github.com/meltwater/puppet-marathon.git
 [submodule "modules/mesos"]
 	path = modules/mesos
 	url = https://github.com/deric/puppet-mesos
