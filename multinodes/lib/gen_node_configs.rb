@@ -12,13 +12,16 @@ def gen_node_configs(cluster_yml)
   slave_ipbase = cluster_yml['slave_ipbase']
   master_instance_type = cluster_yml['master_instance_type']
   slave_instance_type = cluster_yml['slave_instance_type']
+  master_droplet_size = cluster_yml['master_droplet_size']
+  slave_droplet_size = cluster_yml['slave_droplet_size']
 
   master_infos = (1..master_n).map do |i|
                    { :hostname => "master#{i}",
                      :ip => master_ipbase + "#{10+i}",
                      :mem => master_mem,
                      :cpus => master_cpus,
-                     :instance_type => master_instance_type
+                     :instance_type => master_instance_type,
+                     :size => master_droplet_size
                    }
                  end
   slave_infos = (1..slave_n).map do |i|
@@ -26,7 +29,8 @@ def gen_node_configs(cluster_yml)
                      :ip => slave_ipbase + "#{10+i}",
                      :mem => slave_mem,
                      :cpus => slave_cpus,
-                     :instance_type => slave_instance_type
+                     :instance_type => slave_instance_type,
+                     :size => slave_droplet_size
                    }
                  end
 

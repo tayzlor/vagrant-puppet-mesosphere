@@ -17,7 +17,9 @@ slave_cpus : 2
 master_ipbase: "172.31.1."
 slave_ipbase : "172.31.2."
 
-# EC2 Configurations
+######################
+# EC2 Configurations #
+######################
 # please choose one region from
 # ["ap-northeast-1", "ap-southeast-1", "eu-west-1", "sa-east-1",
 #  "us-east-1", "us-west-1", "ap-southeast-2", "us-west-2"]
@@ -41,3 +43,21 @@ region: EDIT_HERE
 # See http://aws.amazon.com/ec2/instance-types/#selecting-instance-types
 master_instance_type: m1.small
 slave_instance_type: m1.small
+
+###############################
+# Digital Ocean Configuration #
+###############################
+token: EDIT_HERE
+ssh_private_key_path: EDIT_HERE
+
+# Choose one from
+#   "sgp1", "nyc1", "nyc2", "sfo1", "lon1", "ams3", "ams2", "nyc3"
+# Or vagrant digitalocean-list regions TOKEN
+region: EDIT_HERE
+
+# set a custom Droplet image to use
+image: EDIT_HERE
+
+# See Vagrant digitalocean-list sizes TOKEN
+master_droplet_size: 512mb
+slave_droplet_size: 512mb

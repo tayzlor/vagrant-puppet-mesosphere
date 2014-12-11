@@ -1,0 +1,14 @@
+# Please set Digital Ocean credentials
+token: EDIT_HERE
+ssh_private_key_path: EDIT_HERE
+
+# Choose one from
+#   "sgp1", "nyc1", "nyc2", "sfo1", "lon1", "ams3", "ams2", "nyc3"
+# Or vagrant digitalocean-list regions TOKEN
+region: EDIT_HERE
+
+# set a custom Droplet image to use
+image: EDIT_HERE
+
+# See Vagrant digitalocean-list sizes TOKEN
+size: 512mb

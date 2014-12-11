@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 ## vagrant plugins required:
-# vagrant-digitalocean, vagrant, vagrant-hosts, vagrant-cachier
+# vagrant-digitalocean, vagrant-aws, vagrant, vagrant-hosts, vagrant-cachier
 Vagrant.configure("2") do |config|
 
   # https://vagrantcloud.com/puppetlabs/boxes/ubuntu-14.04-64-puppet
@@ -35,6 +35,18 @@ Vagrant.configure("2") do |config|
       s.path = "scripts/populate_sshkey.sh"
       s.args = "/home/vagrant vagrant"
     end
+  end
+
+  config.vm.provider :digital_ocean do |digital_ocean, override|
+    conf = YAML.load_file('digital_ocean.yml')
+    override.ssh.private_key_path = conf["ssh_private_key_path"]
+    override.vm.box = 'digital_ocean'
+    override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+
+    digital_ocean.token = conf["token"]
+    digital_ocean.image = conf["image"]
+    digital_ocean.region = conf["region"]
+    digital_ocean.size = conf["size"]
   end
 
   config.vm.provider :aws do |aws, override|
