@@ -56,13 +56,14 @@ Vagrant.configure("2") do |config|
             "quorum"            => "#{(node_configs[:master].length.to_f/2).ceil}",
             "zookeeper"         => "zk://"+node_configs[:master].map{|master| master[:ip]+":2181"}.join(",")+"/mesos",
             "zookeeper_id"       => (/master([0-9]+)/.match node[:hostname])[1],
-            "zookeeper_servers" => node_configs[:master].map{|master| master[:ip]+":2888:3888"}.join(","),
             "marathon_zk"       => "zk://"+node_configs[:master].map{|master| master[:ip]+":2181"}.join(",")+"/marathon",
+            "ip"                => "#{node[:ip]}",
           }
         elsif slave?(node[:hostname]) then
           puppet.manifest_file = "mesos-slave.pp"
           puppet.facter = {
             "zookeeper" => "zk://"+node_configs[:master].map{|master| master[:ip]+":2181"}.join(",")+"/mesos",
+            "ip"        => "#{node[:ip]}",
           }
         end
       end

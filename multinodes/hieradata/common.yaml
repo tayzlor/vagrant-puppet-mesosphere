@@ -8,10 +8,4 @@ marathon::install_java: false
 mesos::repo: 'mesosphere'
 mesos::master_port: 5050
 
-mesos::slave::options:
-  containerizers: 'docker,mesos'
-  executor_registration_timeout: '5mins'
-  hostname: "%{::ipaddress}"
-  log_dir: "/var/log/mesos"
-
 zookeeper::client_port: 2181

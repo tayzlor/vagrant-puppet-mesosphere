@@ -1,21 +1,21 @@
+# $zookeeper, $quorum, $ip and $marathon_zk are passed in
+# from the Vagrantfile depending on the cluster set up in cluster.yml
+
 include basenode
 class { 'mesos':
   zookeeper => $zookeeper
 }
 class { 'mesos::master':
-  options   => {
-    quorum  => $quorum,
-    log_dir => '/var/log/mesos'
+  options    => {
+    quorum   => $quorum,
+    log_dir  => '/var/log/mesos',
+    hostname => $ip,
+    ip       => $ip,
   },
   zookeeper => $zookeeper,
 }
-
-# We split the string into back into an array here because Vagrant
-# does not yet support structured facts for Puppet provisioning.
-$servers = split($zookeeper_servers, ',')
 class { 'zookeeper':
-  id      => $zookeeper_id,
-  servers => $servers
+  id => $zookeeper_id,
 }
 class { 'marathon':
   marathon_zk => $marathon_zk
@@ -24,5 +24,6 @@ class { 'marathon':
 # Ensure Slave service not running on master nodes.
 service { 'mesos-slave':
   ensure => stopped,
-  enable => false
+  enable => false,
+  require => Package['mesos']
 }
