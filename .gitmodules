@@ -15,7 +15,7 @@
 	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
 [submodule "modules/zookeeper"]
 	path = modules/zookeeper
-	url = https://github.com/tayzlor/puppet-zookeeper
+	url = https://github.com/deric/puppet-zookeeper
 [submodule "modules/epel"]
 	path = modules/epel
 	url = https://github.com/stahnma/puppet-module-epel.git
