@@ -27,3 +27,20 @@ service { 'mesos-slave':
   enable => false,
   require => Package['mesos']
 }
+
+if $consul_enable {
+  class { 'consul':
+    join_cluster => $join_cluster,
+    config_hash => {
+      'server'           => true,
+      'bootstrap_expect' => $bootstrap_expect,
+      'data_dir'         => '/opt/consul',
+      'ui_dir'           => '/opt/consul/ui',
+      'log_level'        => 'INFO',
+      'client_addr'      => '0.0.0.0',
+      'advertise_addr'   => $ip,
+      'node_name'        => $node_name,
+      'datacenter'       => $datacenter,
+    }
+  }
+}

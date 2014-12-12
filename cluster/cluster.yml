@@ -1,6 +1,6 @@
 # The numbers of servers
 ##############################
-master_n: 1      # hostname will be master1,master2,…
+master_n: 2      # hostname will be master1,master2,…
 slave_n: 2       # hostname will be slave1,slave2,…
 
 # Memory and Cpus setting(only for virtualbox)
@@ -16,6 +16,14 @@ slave_cpus : 2
 ################################################
 master_ipbase: "172.31.1."
 slave_ipbase : "172.31.2."
+
+# Consul.io settings
+consul_enable: true
+consul_datacenter: eu-west-1
+# The server to join for other nodes joining the cluster. Typically this server
+# would be provisioned first, then the other nodes would join the cluster as
+# they are provisioned.
+consul_join: master1
 
 ######################
 # EC2 Configurations #
