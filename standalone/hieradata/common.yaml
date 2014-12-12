@@ -21,3 +21,14 @@ java::distribution: 'jre'
 zookeeper::client_port: 2181
 zookeeper::servers:
   - "%{::ipaddress}:2888:3888"
+
+consul::config_hash:
+  # If using AWS / Digital Ocean change this to the desired location
+  datacenter: 'eu-west-1'
+  bootstrap_expect: 1
+  data_dir: '/opt/consul'
+  ui_dir: '/opt/consul/ui'
+  client_addr: '0.0.0.0'
+  log_level: 'INFO'
+  node_name: 'mesos'
+  server: true

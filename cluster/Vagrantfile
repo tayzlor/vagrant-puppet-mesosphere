@@ -112,18 +112,31 @@ Vagrant.configure("2") do |config|
         if master?(node[:hostname]) then
           puppet.manifest_file = "mesos-master.pp"
           puppet.facter = {
-            "quorum"            => "#{(node_configs[:master].length.to_f/2).ceil}",
-            "zookeeper"         => "zk://"+node_configs[:master].map{|master| master[:ip]+":2181"}.join(",")+"/mesos",
-            "zookeeper_id"       => (/master([0-9]+)/.match node[:hostname])[1],
-            "marathon_zk"       => "zk://"+node_configs[:master].map{|master| master[:ip]+":2181"}.join(",")+"/marathon",
-            "ip"                => "#{node[:ip]}",
+            "quorum"                  => "#{(node_configs[:master].length.to_f/2).ceil}",
+            "zookeeper"               => "zk://"+node_configs[:master].map{|master| master[:ip]+":2181"}.join(",")+"/mesos",
+            "zookeeper_id"            => (/master([0-9]+)/.match node[:hostname])[1],
+            "marathon_zk"             => "zk://"+node_configs[:master].map{|master| master[:ip]+":2181"}.join(",")+"/marathon",
           }
         elsif slave?(node[:hostname]) then
           puppet.manifest_file = "mesos-slave.pp"
           puppet.facter = {
             "zookeeper" => "zk://"+node_configs[:master].map{|master| master[:ip]+":2181"}.join(",")+"/mesos",
-            "ip"        => "#{node[:ip]}",
           }
+        end
+
+        # General settings, for masters and slaves.
+        puppet.facter["ip"]               = "#{node[:ip]}"
+        # Consul.io settings
+        puppet.facter["consul_enable"]    = conf["consul_enable"]
+        puppet.facter["node_name"]        = node[:hostname]
+        puppet.facter["bootstrap_expect"] = node_configs[:master].length
+        puppet.facter["datacenter"]       = conf["consul_datacenter"]
+
+        # Set the leader to join for the Consul Cluster
+        node_configs[:master].each do |master|
+          if master[:hostname] == conf["consul_join"] then
+            puppet.facter["join_cluster"] = master[:ip]
+          end
         end
       end
 

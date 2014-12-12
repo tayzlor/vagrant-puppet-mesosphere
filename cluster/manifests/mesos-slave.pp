@@ -27,3 +27,18 @@ service { 'zookeeper':
   enable  => false,
   require => Package['mesos']
 }
+
+if $consul_enable {
+  notice $join_cluster
+  class { 'consul':
+    join_cluster => $join_cluster,
+    config_hash => {
+      'data_dir'         => '/opt/consul',
+      'log_level'        => 'INFO',
+      'client_addr'      => '0.0.0.0',
+      'advertise_addr'   => $ip,
+      'node_name'        => $node_name,
+      'datacenter'       => $datacenter
+    }
+  }
+}

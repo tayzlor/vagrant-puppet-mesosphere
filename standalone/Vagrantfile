@@ -26,10 +26,12 @@ Vagrant.configure("2") do |config|
       provisioner.add_host private_ip , [ config.vm.hostname ]
     end
 
-    # for mesos web UI.
+    # Mesos web UI
     override.vm.network :forwarded_port, guest: 5050, host: 5050
-    # for Marathon web UI
+    # Marathon web UI
     override.vm.network :forwarded_port, guest: 8080, host: 8080
+    # Consul web UI
+    override.vm.network :forwarded_port, guest: 8500, host: 8500
 
     override.vm.provision :shell do |s|
       s.path = "scripts/populate_sshkey.sh"
