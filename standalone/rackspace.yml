@@ -1,0 +1,35 @@
+# Please set Rackspace credentials
+username: EDIT_HERE
+api_key: EDIT_HERE
+
+ssh_private_key_path: 'scripts/sshkey/id_dsa'
+
+# The path to a public key to initialize with the remote server. 
+# This should be the matching pair for the private key configured with config.ssh.private_key_path on Vagrant
+public_key_path: 'scripts/sshkey/id_dsa.pub'
+
+# The name of the server within RackSpace Cloud. 
+# This defaults to the name of the Vagrant machine (via config.vm.define)
+server_name: EDIT_HERE
+
+# The region to hit. By default this is :dfw. Valid options are: :dfw, :ord, :lon, :iad, :syd. 
+# Users should preference using this setting over rackspace_compute_url setting
+rackspace_region: EDIT_HERE
+
+# The endpoint to authentication against. By default, vagrant will use the 
+# global rackspace authentication endpoint for all regions with the exception of :lon. 
+# IF :lon region is specified vagrant will authenticate against the UK authentication endpoint
+rackspace_auth_url: EDIT_HERE
+
+# Choose one from
+#   "/1 GB Performance/", "/512 GB Performance/", "/2 GB Performance/"
+# Or vagrant digitalocean-list regions TOKEN
+flavor: EDIT_HERE
+
+# set a image here e.g. /Ubuntu/ or vagrant rackspace images
+image: EDIT_HERE
+
+# Setting extra metadata
+metadata: EDIT_HERE
+
+

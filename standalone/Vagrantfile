@@ -49,6 +49,25 @@ Vagrant.configure("2") do |config|
     digital_ocean.size = conf["size"]
   end
 
+
+
+  config.vm.provider :rackspace do |rs, override|
+    conf = YAML.load_file('rackspace.yaml')
+    override.ssh.private_key_path = conf["ssh_private_key_path"]
+    override.config.vm.define = conf["server_name"]
+
+    override.vm.box = "dummy"
+    override.vm.box_url = "https://github.com/mitchellh/vagrant-rackspace/raw/master/dummy.box"
+
+    rs.username = conf["username"]
+    rs.api_key  = conf["api_key"]
+    rs.region   = conf["rackspace_region"]
+    rs.auth     = conf["rackspace_auth_url"]
+    rs.flavor   = conf["flavor"]
+    rs.image    = conf["image"]
+    rs.metadata = conf["metadata"]
+  end
+
   config.vm.provider :aws do |aws, override|
     conf = YAML.load_file('aws.yaml')
 
