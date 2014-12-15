@@ -1,0 +1,2 @@
+mesos::repo: 'mesosphere'
+docker::version: '1.0.1'

@@ -5,8 +5,13 @@
 Vagrant.configure("2") do |config|
 
   # https://vagrantcloud.com/puppetlabs/boxes/ubuntu-14.04-64-puppet
-  # config.vm.box = "puppetlabs/ubuntu-14.04-64-puppet"
-  config.vm.box = "puppetlabs/centos-6.5-64-puppet"
+  config.vm.define "ubuntu" do |ubuntu|
+    ubuntu.vm.box = "puppetlabs/ubuntu-14.04-64-puppet"
+  end
+  
+  config.vm.define "centos" do |centos|
+    centos.vm.box = "puppetlabs/centos-6.5-64-puppet"
+  end
 
   # If you want to use vagrant-cachier,
   # please install vagrant-cachier plugin.

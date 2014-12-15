@@ -1,8 +1,8 @@
 marathon::version: '0.7.5'
 marathon::source_install: false
 marathon::install_java: false
+marathon::service::ensure: running
 
-#mesos::repo: 'mesosphere'
 mesos::master_port: 5050
 mesos::zookeeper: 'zk://localhost:2181/mesos'
 
@@ -15,8 +15,6 @@ mesos::slave::options:
   executor_registration_timeout: '5mins'
   hostname: "%{::ipaddress}"
 
-#docker::version: '1.0.1'
-docker::package_name: 'docker-io'
 java::distribution: 'jre'
 
 zookeeper::client_port: 2181
