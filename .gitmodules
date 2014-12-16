@@ -31,3 +31,12 @@
 [submodule "modules/staging"]
 	path = modules/staging
 	url = https://github.com/nanliu/puppet-staging.git
+[submodule "modules/consul_template"]
+	path = modules/consul_template
+	url = https://github.com/tayzlor/puppet-consul_template.git
+[submodule "modules/haproxy"]
+	path = modules/haproxy
+	url = https://github.com/puppetlabs/puppetlabs-haproxy
+[submodule "modules/concat"]
+	path = modules/concat
+	url = https://github.com/puppetlabs/puppetlabs-concat

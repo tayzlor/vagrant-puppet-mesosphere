@@ -1,4 +1,4 @@
-docker::version: '1.0.1'
+docker::version: '1.4.0'
 java::distribution: 'jre'
 
 marathon::version: '0.7.5'
