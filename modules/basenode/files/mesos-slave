@@ -1,0 +1,66 @@
+#!/bin/bash
+#
+# /etc/init.d/mesos-slave
+#
+# Startup script for mesos-slave
+#
+# chkconfig: 2345 20 80
+# description: Starts and stops mesos-slave
+
+. /etc/init.d/functions
+
+prog="mesos-slave"
+mesosBin="/usr/local/sbin/$prog"
+mesosUser="mesos"
+desc="Mesos Slave daemon"
+outFile="/var/log/mesos/$prog.out"
+
+if ! [ -f $mesosBin ]; then
+  echo "$prog binary not found."
+  exit 5
+fi
+
+if [ -f /etc/sysconfig/mesos ]; then
+  . /etc/sysconfig/mesos
+fi
+
+start() {
+  echo "Starting $desc ($prog): "
+  nohup $mesosBin --quiet --conf=/etc/mesos-slave/ >>$outFile 2>&1 &
+  RETVAL=$?
+  return $RETVAL
+}
+
+stop() {
+  echo "Shutting down $desc ($prog): "
+  pkill -f $mesosBin
+}
+
+restart() {
+    stop
+    start
+}
+
+status() {
+  if [ -z $pid ]; then
+     pid=$(pgrep -f $mesosBin)
+  fi
+
+  if [ -z $pid ]; then
+    echo "$prog is NOT running."
+    return 1
+  else
+    echo "$prog is running (pid is $pid)."
+  fi
+
+}
+
+case "$1" in
+  start)   start;;
+  stop)    stop;;
+  restart) restart;;
+  status)  status;;
+  *)       echo "Usage: $0 {start|stop|restart|status}"
+           RETVAL=2;;
+esac
+exit $RETVAL

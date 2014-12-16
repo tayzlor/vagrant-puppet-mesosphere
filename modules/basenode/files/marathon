@@ -1,0 +1,69 @@
+#!/bin/bash
+# ### BEGIN INIT INFO
+# # Provides:          marathon
+# # Required-Start:    $local_fs $remote_fs $network $syslog
+# # Required-Stop:     $local_fs $remote_fs $network $syslog
+# # Default-Start:     2 3 4 5
+# # Default-Stop:      0 1 6
+# # Short-Description: Init for Apache Mesos
+# # Description:       Cluster-wide init and control system for Apache Mesos
+# ### END INIT INFO
+set -ue
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+NAME="marathon"
+DESC="marathon"
+
+[ -e /etc/sysconfig/$NAME ] && . /etc/sysconfig/$NAME
+
+lockfile="/var/lock/subsys/$NAME"
+PID=/var/run/marathon.pid
+
+
+start() {
+  echo -n $"Starting $desc ($NAME): "
+  touch $PID
+  daemon --pidfile "$PID" --exec /usr/local/bin/marathon
+  retval=$?
+  echo
+  [ $retval -eq 0 ] && touch $lockfile
+  return $retval
+}
+
+stop() {
+  echo -n $"Stopping $NAME: "
+  killproc -p $PID  $NAME
+  retval=$?
+  echo
+  [ $retval -eq 0 ] && rm -f $lockfile
+  return $retval
+}
+
+case "${1-}" in
+  start)
+    echo -n "Starting $DESC: "
+    start
+    echo "$NAME."
+    ;;
+  stop)
+    echo -n "Stopping $DESC: "
+    stop
+    echo "$NAME."
+    ;;
+  restart)
+    echo -n "Restarting $DESC: "
+    stop
+    sleep 1
+    start
+    echo "$NAME."
+    ;;
+  status)
+    status_of_proc -p "$PID" "$NAME" "$NAME"
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status}" >&2
+    exit 1
+    ;;
+esac
