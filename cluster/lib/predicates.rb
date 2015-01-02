@@ -8,3 +8,7 @@ end
 def slave?(name)
     return /^slave/ =~ name
 end
+
+def haproxy?(name)
+    return /^haproxy/ =~ name
+end

@@ -9,3 +9,4 @@ mesos::repo: 'mesosphere'
 mesos::master_port: 5050
 
 zookeeper::client_port: 2181
+consul_template::install_method: 'url'

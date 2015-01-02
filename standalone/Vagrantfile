@@ -33,6 +33,8 @@ Vagrant.configure("2") do |config|
     # Consul web UI
     override.vm.network :forwarded_port, guest: 8500, host: 8500
 
+    override.vm.synced_folder "examples", "/home/vagrant/examples"
+
     override.vm.provision :shell do |s|
       s.path = "scripts/populate_sshkey.sh"
       s.args = "/home/vagrant vagrant"

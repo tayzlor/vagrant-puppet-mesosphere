@@ -8,7 +8,15 @@ include mesos::slave
 $consul_enable = hiera('consul_enable')
 if $consul_enable {
   include consul
-  include consul_template
+  class { 'consul_template':
+    require => Service['consul'],
+  }
+
+  #include dnsmasq
+  #dnsmasq::conf { 'consul':
+  #  ensure  => present,
+  #  content => 'server=/consul/127.0.0.1#8600',
+  #}
 }
 
 include haproxy

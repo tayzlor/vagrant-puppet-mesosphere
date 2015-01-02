@@ -14,6 +14,12 @@ def gen_node_configs(cluster_yml)
   slave_instance_type = cluster_yml['slave_instance_type']
   master_droplet_size = cluster_yml['master_droplet_size']
   slave_droplet_size = cluster_yml['slave_droplet_size']
+  haproxy_n = cluster_yml['haproxy_n']
+  haproxy_mem = cluster_yml['haproxy_mem']
+  haproxy_cpus = cluster_yml['haproxy_cpus']
+  haproxy_ipbase = cluster_yml['haproxy_ipbase']
+  haproxy_instance_type = cluster_yml['haproxy_instance_type']
+  haproxy_droplet_size = cluster_yml['haproxy_droplet_size']
 
   master_infos = (1..master_n).map do |i|
                    { :hostname => "master#{i}",
@@ -33,6 +39,15 @@ def gen_node_configs(cluster_yml)
                      :size => slave_droplet_size
                    }
                  end
+  haproxy_infos = (1..haproxy_n).map do |i|
+                     { :hostname => "haproxy#{i}",
+                       :ip => haproxy_ipbase + "#{10+i}",
+                       :mem => haproxy_mem,
+                       :cpus => haproxy_cpus,
+                       :instance_type => haproxy_instance_type,
+                       :size => haproxy_droplet_size
+                     }
+                   end
 
-  return { :master => master_infos, :slave=>slave_infos }
+  return { :master => master_infos, :slave=>slave_infos, :haproxy=>haproxy_infos }
 end
