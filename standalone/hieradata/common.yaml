@@ -8,19 +8,19 @@ mesos::zookeeper: 'zk://localhost:2181/mesos'
 
 mesos::master::options:
   quorum: '1'
+  log_dir: '/var/log/mesos'
 
 mesos::slave::zookeeper: 'zk://localhost:2181/mesos'
 mesos::slave::options:
   containerizers: 'docker,mesos'
   executor_registration_timeout: '5mins'
-  hostname: "%{::ipaddress}"
+  hostname: "%{::ipaddress_eth1}"
+  ip: "%{::ipaddress_eth1}"
 
-docker::version: '1.0.1'
+docker::version: '1.4.0'
 java::distribution: 'jre'
 
 zookeeper::client_port: 2181
-zookeeper::servers:
-  - "%{::ipaddress}:2888:3888"
 
 consul::config_hash:
   # If using AWS / Digital Ocean change this to the desired location
@@ -32,3 +32,5 @@ consul::config_hash:
   log_level: 'INFO'
   node_name: 'mesos'
   server: true
+
+consul_enable: true
