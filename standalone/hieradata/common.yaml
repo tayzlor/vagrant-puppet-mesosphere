@@ -31,5 +31,4 @@ consul::config_hash:
   node_name: 'mesos'
   server: true
 
-consul_template::install_method: 'url'
 consul_enable: true

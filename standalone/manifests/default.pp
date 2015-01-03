@@ -11,10 +11,4 @@ if $consul_enable {
   include consul_template
 }
 
-include haproxy
-haproxy::listen { 'puppet00':
-  collect_exported => false,
-  ipaddress        => $::ipaddress,
-  ports            => '80',
-}
-include haproxy_consul_templates
+
