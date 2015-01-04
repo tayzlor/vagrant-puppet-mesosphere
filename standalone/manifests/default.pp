@@ -8,7 +8,6 @@ include mesos::slave
 $consul_enable = hiera('consul_enable')
 if $consul_enable {
   include consul
-  include consul_template
 }
 
 
