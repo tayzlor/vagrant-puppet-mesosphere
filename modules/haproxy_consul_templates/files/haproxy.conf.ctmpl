@@ -1,9 +1,0 @@
-defaults REDIS
-    mode tcp
-    timeout connect  4s
-    timeout server  30s
-    timeout client  30s
-
-listen http-in
-    bind *:80{{range service "drupal"}}
-        server {{.Node}} {{.Address}}:{{.Port}}{{end}}
