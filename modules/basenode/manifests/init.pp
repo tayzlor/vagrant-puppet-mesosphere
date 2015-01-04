@@ -41,9 +41,6 @@ class basenode() {
           mode   => '0554';
         '/opt/marathon':
           ensure => "directory";
-        '/var/log/mesos':
-          ensure => present,
-          owner  => vagrant;
       }
 
       exec { 'rpm --import http://archive.cloudera.com/cdh4/redhat/6/x86_64/cdh/RPM-GPG-KEY-cloudera':

@@ -15,30 +15,43 @@ set -ue
 
 NAME="marathon"
 DESC="marathon"
+marathonExec="/usr/local/bin/$NAME"
+outFile="/var/log/marathon/$NAME.out"
 
-[ -e /etc/sysconfig/$NAME ] && . /etc/sysconfig/$NAME
+if ! [ -f $marathonExec ]; then
+  echo "$NAME binary not found."
+  exit 5
+fi
 
-lockfile="/var/lock/subsys/$NAME"
-PID=/var/run/marathon.pid
+if [ -f /etc/sysconfig/$NAME ]; then
+  . /etc/sysconfig/$NAME
+fi
 
 
 start() {
   echo -n $"Starting $desc ($NAME): "
-  touch $PID
-  daemon --pidfile "$PID" --exec /usr/local/bin/marathon
-  retval=$?
-  echo
-  [ $retval -eq 0 ] && touch $lockfile
-  return $retval
+  nohup $marathonExec --quiet >>$outFile 2>&1 &
+  RETVAL=$?
+  return $RETVAL  
 }
 
 stop() {
   echo -n $"Stopping $NAME: "
-  killproc -p $PID  $NAME
-  retval=$?
-  echo
-  [ $retval -eq 0 ] && rm -f $lockfile
-  return $retval
+  pkill -f $marathonExec
+}
+
+status() {
+  if [ -z $pid ]; then
+     pid=$(pgrep -f $marathonExec)
+  fi
+
+  if [ -z $pid ]; then
+    echo "$NAME is NOT running."
+    return 1
+  else
+    echo "$NAME is running (pid is $pid)."
+  fi
+
 }
 
 case "${1-}" in
@@ -60,8 +73,7 @@ case "${1-}" in
     echo "$NAME."
     ;;
   status)
-    status_of_proc -p "$PID" "$NAME" "$NAME"
-    ;;
+    status;;
   *)
     echo "Usage: $0 {start|stop|restart|status}" >&2
     exit 1

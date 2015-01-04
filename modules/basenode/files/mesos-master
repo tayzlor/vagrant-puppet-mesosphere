@@ -26,7 +26,7 @@ fi
 
 start() {
   echo "Starting $desc ($prog): "
-  nohup $mesosBin --quiet --conf=/etc/mesos-master/ >>$outFile 2>&1 &
+  nohup $mesosBin --quiet --work_dir=/var/lib/mesos >>$outFile 2>&1 &
   RETVAL=$?
   return $RETVAL
 }
