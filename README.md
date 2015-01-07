@@ -8,6 +8,11 @@ This creates a Mesos cluster in which [Marathon](https://github.com/mesosphere/m
 	* [Mesos Standalone on VirtualBox](#svb)
 	* [Mesos Cluster on VirtualBox](#clvb)
 
+Supported OS's
+----
+Tested on Centos 6.5 & Ubuntu 14.04
+
+
 Prerequisites
 ----
 * vagrant 1.6.5+: <http://www.vagrantup.com/>
