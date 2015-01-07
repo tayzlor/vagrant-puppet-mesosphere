@@ -1,3 +1,5 @@
+docker::version: '1.4.0'
+
 marathon::version: '0.7.5'
 marathon::source_install: false
 marathon::install_java: false
