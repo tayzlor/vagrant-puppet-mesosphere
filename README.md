@@ -1,6 +1,6 @@
 vagrant-puppet-mesosphere
 ====================
-Create your [Mesosphere](http://mesosphere.com) stack with [Vagrant](http://www.vagrantup.com) and [Puppet](http://puppetlabs.com/) (Virtualbox / AWS / Digital Ocean are supported providers).
+Create your [Mesosphere](http://mesosphere.com) stack with [Vagrant](http://www.vagrantup.com) and [Puppet](http://puppetlabs.com/) (Virtualbox / AWS / Digital Ocean / Rackspace are supported providers).
 
 This creates a Mesos cluster in which [Marathon](https://github.com/mesosphere/marathon) framework and [Consul](https://github.com/hashicorp/consul) (Optional, used for service discovery) are running.  This means you can build your own __Mesos+Marathon+Docker__ PaaS with `vagrant up`!  _If you want to deploy docker containers, please refer to the chapter "Deploy Docker Container with Marathon" in [this blog entry](http://frankhinek.com/deploy-docker-containers-on-mesos-0-20/)._
 
@@ -21,6 +21,8 @@ Prerequisites
         `$ vagrant plugin install vagrant-aws`
     * [vagrant-digitalocean](https://github.com/smdahlen/vagrant-digitalocean) (only if you use DigitalOcean.)
         `$ vagrant plugin install vagrant-digitalocean`
+    * [vagrant-rackspace](https://github.com/mitchellh/vagrant-rackspace) (only if you use Rackspace.)
+        `$ vagrant plugin install vagrant-rackspace`
 
 <a name="svb"></a>
 Mesos Standalone on VirtualBox
@@ -36,7 +38,7 @@ Includes -
 * Consul, running in server mode (Optional - configure via ```consul_enable:``` param in ```hieradata/common.yml```  )
 
     $ cd standalone
-    $ vagrant up
+    $ vagrant up (ubuntu/centos)
 
 After box is up, you can see services running at:
 
