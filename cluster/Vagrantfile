@@ -46,7 +46,7 @@ Vagrant.configure("2") do |config|
         end
       end
 
-      config.vm.provider :digital_ocean do |digital_ocean, override|
+      cfg.vm.provider :digital_ocean do |digital_ocean, override|
         override.ssh.private_key_path = conf["ssh_private_key_path"]
         override.vm.box = 'digital_ocean'
         override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
