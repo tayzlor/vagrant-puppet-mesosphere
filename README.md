@@ -22,6 +22,15 @@ Prerequisites
     * [vagrant-digitalocean](https://github.com/smdahlen/vagrant-digitalocean) (only if you use DigitalOcean.)
         `$ vagrant plugin install vagrant-digitalocean`
 
+Clone this repository and update git submodules:
+
+```shell
+$ git clone https://github.com/tayzlor/vagrant-puppet-mesosphere.git
+$ cd vagrant-puppet-mesosphere
+$ git submodule init
+$ git submodule update
+```
+
 <a name="svb"></a>
 Mesos Standalone on VirtualBox
 ----
@@ -35,8 +44,10 @@ Includes -
 * Zookeeper
 * Consul, running in server mode (Optional - configure via ```consul_enable:``` param in ```hieradata/common.yml```  )
 
-    $ cd standalone
-    $ vagrant up
+```shell
+$ cd standalone
+$ vagrant up
+```
 
 After box is up, you can see services running at:
 
@@ -50,7 +61,7 @@ Mesos Cluster on VirtualBox
 ### Cluster Configuration
 Cluster configuration is defined at `cluster/cluster.yml`.  You can edit the file to configure cluster settings.
 
-```
+```yaml
 # Mesos cluster configurations
 # The numbers of servers
 ##############################
@@ -93,9 +104,9 @@ Includes -
 ### Launch Cluster
 This may takes several minutes(10 to 20 min.).
 
-```
+```shell
 $ cd cluster
-$ ./vagrant up
+$ vagrant up
 ```
 
 At default setting, after all the boxes are up, you can see services running at:
@@ -107,11 +118,11 @@ At default setting, after all the boxes are up, you can see services running at:
 #### Destroy Cluster
 this operations all VM instances forming the cluster.
 
-```
+```shell
 $ cd cluster
-$ ./vagrant destroy
+$ vagrant destroy
 ```
 
 #### Credits
 Inspired by - [https://github.com/everpeace/vagrant-mesos](https://github.com/everpeace/vagrant-mesos) which is similar but uses Chef, and has a slightly different cluster layout / components.
-[philzim.com/2014/11/12/service-discovery-orchestration-with-mesos-and-consul](philzim.com/2014/11/12/service-discovery-orchestration-with-mesos-and-consul)
+[http://philzim.com/2014/11/12/service-discovery-orchestration-with-mesos-and-consul](http://philzim.com/2014/11/12/service-discovery-orchestration-with-mesos-and-consul)
