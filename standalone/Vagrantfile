@@ -1,5 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+require 'yaml'
+
 ## vagrant plugins required:
 # vagrant-digitalocean, vagrant-aws, vagrant, vagrant-hosts, vagrant-cachier
 Vagrant.configure("2") do |config|
